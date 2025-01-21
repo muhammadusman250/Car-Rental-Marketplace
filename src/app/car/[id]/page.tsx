@@ -33,51 +33,6 @@ export default async function CarDetailsPage({ params }: CarDetailsProps) {
   }
 
   return (
-    // <div className="max-w-6xl mx-auto p-6">
-    //   {/* Car Title and Image */}
-    //   <div className="flex flex-col md:flex-row items-center gap-6">
-    //     <div className="w-full md:w-1/2">
-    //       <Image
-    //         src={car.image}
-    //         alt={car.name}
-    //         width={600}
-    //         height={400}
-    //         className="rounded-lg shadow-lg object-cover"
-    //       />
-    //     </div>
-    //     <div className="w-full md:w-1/2 border p-6 rounded-lg shadow-lg ">
-    //       <h1 className="text-4xl font-semibold text-gray-800">{car.name}</h1>
-    //       <p className="text-xl text-gray-600">{car.type}</p>
-    //       <div className="mt-4">
-    //         <p className="text-lg font-semibold text-gray-700">Price per Day</p>
-    //         <p className="text-xl font-bold text-blue-600">{car.pricePerDay}</p>
-    //       </div>
-    //       <div className="mt-4">
-    //         <p className="text-lg font-semibold text-gray-700">Fuel Capacity</p>
-    //         <p className="text-md text-gray-600">{car.fuelCapacity}</p>
-    //       </div>
-    //       <div className="mt-4">
-    //         <p className="text-lg font-semibold text-gray-700">Transmission</p>
-    //         <p className="text-md text-gray-600">{car.transmission}</p>
-    //       </div>
-    //       <div className="mt-4">
-    //         <p className="text-lg font-semibold text-gray-700">Seating Capacity</p>
-    //         <p className="text-md text-gray-600">{car.seatingCapacity}</p>
-    //       </div>
-    //       <div className="mt-6">
-    //         <button className="px-8 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all duration-300">
-    //           Rent Now
-    //         </button>
-    //       </div>
-    //     </div>
-    //   </div>
-
-    //   {/* Car Description */}
-    //   <div className="mt-8">
-    //     <h2 className="text-2xl font-semibold text-gray-800">Description</h2>
-    //     <p className="text-md text-gray-600 mt-4">{car.description}</p>
-    //   </div>
-    // </div>
     <div className="w-full md:w-3/4 mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 p-4">
       <div className="w-full flex flex-col items-center">
         <Image alt={car.name} src={car.image} width={250} height={250} />
