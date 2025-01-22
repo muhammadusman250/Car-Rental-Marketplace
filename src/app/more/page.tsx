@@ -1,214 +1,164 @@
 "use client";
+import React, { useEffect, useState } from "react";
+import Mycard from "@/components/Mycard";
+import { client } from "@/sanity/lib/client";
 
-import React, { useState, useEffect } from "react";
-import { client } from "@/sanity/lib/client"; // Sanity client for fetching data
-
-import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { Heart } from "lucide-react";
-import Footer from "@/components/Footer/Footer";
-import Header from "@/components/Header/Header";
-
-// Type definitions for the cars
-type CarType = "Sport" | "SUV" | "Sedan" | "Hatchback";
-type TransmissionType = "Automatic" | "Manual";
-
-interface CarsData {
-  _id: string;
+type AllCar = {
+  id: number;
   name: string;
-  type: CarType;
+  category: string;
+  image: string;
   fuelCapacity: number;
-  transmission: TransmissionType;
   seatingCapacity: number;
   pricePerDay: number;
-  originalPrice: number;
-  tags: string[];
-  image: string;
-}
-
-const CarFilter = () => {
-  // State to store cars and filter values
-  const [cars, setCars] = useState<CarsData[]>([]);
-  const [typeFilter, setTypeFilters] = useState<CarType[]>([]);
-  const [seatFilter, setSeatFilters] = useState<number[]>([]);
-  const [maxRange, setMaxRange] = useState<number>(100);
-
-  // Fetch cars data from Sanity
-  useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const Cars: CarsData[] = await client.fetch(
-          `*[_type == "car"]{
-            _id,
-            name,
-            type,
-            fuelCapacity,
-            transmission,
-            seatingCapacity,
-            pricePerDay,
-            originalPrice,
-            tags,
-            "image": image.asset->url
-          }`
-        );
-        console.log("Fetched Cars:", Cars); // Log the fetched data
-        setCars(Cars); // Set the fetched data to the state
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchCars();
-  }, []); // Run once when the component is mounted
-
-  // Filtering function for cars
-  const Filtering = (cars: CarsData[]) => {
-    return cars.filter((car) => {
-      // Check if the car matches the type filter
-      const matchesType = typeFilter.length === 0 || typeFilter.includes(car.type);
-
-      // Check if the car matches the seat filter
-      const matchesSeat = seatFilter.length === 0 || seatFilter.includes(car.seatingCapacity);
-
-      // Check if the car matches the price range filter
-      const matchesRange = car.pricePerDay <= maxRange;
-
-      // Return true if all conditions match
-      return matchesType && matchesSeat && matchesRange;
-    });
-  };
-
-  // Filtered cars based on the selected filters
-  const filteredCars = Filtering(cars);
-
-  return (
-    <div>
-      {/* Header Component */}
-      <Header />
-      
-      <div className="flex gap-6 px-[5%] max-md:px-[2%] p-6">
-        {/* Sidebar Filter Section */}
-        <Card className="w-64 h-fit p-4 sticky max-sm:hidden">
-          <div className="space-y-6">
-            {/* Type Filter */}
-            <div>
-              <h3 className="text-sm font-semibold mb-3">TYPE</h3>
-              <div className="space-y-2">
-                {["Sport", "SUV", "Sedan", "Hatchback"].map((type) => (
-                  <div key={type} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={type}
-                      checked={typeFilter.includes(type as CarType)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setTypeFilters([...typeFilter, type as CarType]);
-                        } else {
-                          setTypeFilters(typeFilter.filter((t) => t !== type));
-                        }
-                      }}
-                    />
-                    <Label htmlFor={type}>{type}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Seat Capacity Filter */}
-            <div>
-              <h3 className="text-sm font-semibold mb-3">CAPACITY</h3>
-              <div className="space-y-2">
-                {[2, 4, 6, 8].map((capacity) => (
-                  <div key={capacity} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`capacity-${capacity}`}
-                      checked={seatFilter.includes(capacity)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setSeatFilters([...seatFilter, capacity]);
-                        } else {
-                          setSeatFilters(seatFilter.filter((c) => c !== capacity));
-                        }
-                      }}
-                    />
-                    <Label htmlFor={`capacity-${capacity}`}>{capacity} Person</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Price Range Filter */}
-            <div>
-              <h3 className="text-sm font-semibold mb-3">PRICE</h3>
-              <input
-                type="range"
-                min="0"
-                max="150"
-                step="1"
-                value={maxRange}
-                onChange={(e) => setMaxRange(Number(e.target.value))}
-                className="w-full"
-              />
-              <div className="mt-2 text-sm">Max. ${maxRange.toFixed(2)}</div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Car Listing */}
-        <div className="flex-1">
-          <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3 px-10">
-            {filteredCars.length === 0 ? (
-              <p>No cars available</p>
-            ) : (
-              filteredCars.map((car) => (
-                <Card
-                  key={car._id}
-                  className="p-4 shadow-lg hover:shadow-2xl hover:scale-105 duration-300"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h4 className="font-semibold mb-1">{car.name}</h4>
-                      <h4 className="text-sm text-gray-500">{car.type}</h4>
-                    </div>
-                    <Button variant="ghost" size="icon" className="rounded-full">
-                      <Heart />
-                    </Button>
-                  </div>
-                  <img
-                    src={car.image}
-                    alt={car.name}
-                    width={40}
-                    height={40}
-                    className="w-full h-40 object-contain my-4"
-                  />
-                  <div className="flex justify-evenly items-center mb-4 text-sm text-gray-600 font-bold">
-                    <div className="items-center">{car.seatingCapacity} Seats</div>
-                    <div className="items-center">${car.pricePerDay}/day</div>
-                    <Button className="bg-blue-600 px-5 mx-3">
-                      <Link href="/">Rent Now</Link>
-                    </Button>
-                  </div>
-                </Card>
-              ))
-            )}
-          </div>
-
-          {/* Show More Button */}
-          <div className="text-center py-7">
-            <Button className="bg-blue-600 px-5 mx-3">
-              <Link href="/">Show more cars</Link>
-            </Button>
-            <div className="text-right text-gray-500 px-10">120 Cars</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer Component */}
-      <Footer />
-    </div>
-  );
+  type:string;
+  originalPrice?: number;
 };
 
-export default CarFilter;
+async function fetchAllCarsFromSanity() {
+  const query = `*[_type == "car"]{
+    id,
+    type,
+    name,
+    category,
+    "image": image.asset->url,
+    fuelCapacity,
+    seatingCapacity,
+    pricePerDay,
+    originalPrice
+  }`;
+
+  try {
+    const cars = await client.fetch(query);
+
+    return cars.map((car: any) => ({
+      id: car.id,
+      name: car.name,
+      type:car.type,
+      category: car.category,
+      image: car.image || "",
+      fuelCapacity: car.fuelCapacity || 0,
+      seatingCapacity: car.seatingCapacity || 0,
+      price: car.pricePerDay || 0,
+      originalPrice: car.originalPrice || undefined,
+    }));
+  } catch (error) {
+    console.error("Error fetching data from Sanity:", error);
+    return [];
+  }
+}
+
+function Page() {
+  const [carData, setCarData] = useState<AllCar[]>([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [filterType, setFilterType] = useState("");
+
+  useEffect(() => {
+    async function fetchData() {
+      const fetchedCars = await fetchAllCarsFromSanity();
+      setCarData(fetchedCars);
+    }
+    fetchData();
+  }, []);
+
+  return (
+    <section className="px-6 sm:px-10 bg-[#f6f7f9] py-8 space-y-8">
+      <div className="space-y-8">
+        <div className="flex flex-col sm:flex-row items-center justify-between sm:space-y-0 space-y-5">
+          <h1 className="text-[#90A3BF] text-base font-semibold ">All Cars</h1>
+          <div className="flex items-center flex-col sm:flex-row  xl:w-[40%] sm:gap-x-5 sm:space-y-0 space-y-5">
+            {/* Search */}
+            <div className="flex items-center justify-between w-full sm:w-[95%] h-[44px] rounded-[70px] px-4 border border-gray-400">
+              <div className="flex items-center gap-3">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
+                    stroke="#596780"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M22 22L20 20"
+                    stroke="#596780"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search cars by name"
+                  className="w-full outline-none bg-transparent"
+                  onChange={(e) => setSearchValue(e.target.value.toLowerCase())}
+                />
+              </div>
+            </div>
+
+            {/* FILTER */}
+            <select
+              onChange={(e) => setFilterType(e.target.value)}
+              className="outline-none overflow-hidden w-full sm:w-[95%] h-12 rounded-[70px] px-4 border border-gray-400 bg-transparent"
+            >
+              <option value="" hidden>
+                Filter by Type
+              </option>
+              <option value="">All</option>
+              <option value="Sport">Sport</option>
+              <option value="Sedan">Sedan</option>
+              <option value="Electric">Electric</option>
+              <option value="Gasoline">Gasoline</option>
+              <option value="Diesel">Diesel</option>
+              <option value="Hybrid">Hybrid</option>
+              <option value="SUV">SUV</option>
+              <option value="Hatchback">Hatchback</option>
+            </select>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {carData.filter((searchproduct) =>
+            searchproduct.name.toLowerCase().includes(searchValue)
+          ).length > 0 ? (
+            carData
+              .filter((searchproduct) =>
+                searchproduct.name
+                  .toLowerCase()
+                  .includes(searchValue.toLowerCase())
+              )
+              .filter((filtCategory) =>
+                filtCategory.type.includes(filterType)
+              )
+              .map((val: AllCar, index: number) => (
+                <Mycard
+                  key={index}
+                  id={val.id}
+                  name={val.name}
+                  category={val.category}
+                  image={val.image}
+                  petrol={val.fuelCapacity}
+                  people={val.seatingCapacity}
+                  pricePerDay={val.pricePerDay}
+                  originalPrice={val.originalPrice}
+                />
+              ))
+          ) : (
+            <div className=" text-xl w-full text-gray-500 mt-4 ">
+              <h1>
+                No cars found matching your search or check your internet
+                connection.
+              </h1>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default Page;
