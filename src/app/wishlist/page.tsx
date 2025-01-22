@@ -2,6 +2,7 @@
 import Image from "next/image";
 import React from "react";
 import { useWish } from "@/Context/wishlistContext";   
+import { Trash } from "lucide-react";
 
 type AllCar = {
   id: number;
@@ -57,34 +58,21 @@ function Page() {
             <tbody>
               {wishItems.map((item: AllCar) => (
                 <tr key={item.id}>
-                  <td className="w-[25vw] sm:w-[30vw] md:py-4 border flex justify-center items-center">
+                  <td className="w-[25vw] sm:w-[30vw] md:py-4 border flex justify-center justify-items-center py-[5%]">
                     <Image
                       src={item.image}
                       alt={item.name}
-                      className="md:w-[12vw] w-[16vw] md:h-[6vw] h-[16vw]"
+                      className="max-md:w-[17vw] md:w-[20vw] max-md:h-[7vw] md:h-[10vw]"
                       width={300}
                       height={200}
                     />
                   </td>
-                  <td className="w-96 border text-center">{item.name}</td>
-                  <td className="w-52 border text-center">{item.price}</td>
-                  <td className="w-52 border ">
-                    <div className="flex justify-center items-center">
+                  <td className="md:w-52 max-md:w-40 max-md:text-sm border text-center py-[2%]">{item.name}</td>
+                  <td className="md:w-52 max-md:w-40 max-md:text-sm border text-center py-[2%]">{item.price}</td>
+                  <td className="md:w-52 max-md:w-40 max-md:text-sm border py-[2%]">
+                    <div className="flex justify-center items-center text-red-500 max-md:text-[10px]">
                       <button onClick={() => removeWishHandler(item.id)}>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-7 h-7 "
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={1.5}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M6 18L18 6M6 6l12 12"
-                          ></path>
-                        </svg>
+                       <Trash/>
                       </button>
                     </div>
                   </td>

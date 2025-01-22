@@ -1,24 +1,25 @@
-"use client"
-import DashboardAsideBar from "@/components/Dashboard Asidebar";
+"use client";
+import DashboardAsideBar from "@/components/DashboardAsideBar";
 import { client } from "@/sanity/lib/client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 type AllCar = {
+  price: number;
   id: number;
   name: string;
   category: string;
   image: string;
-  petrol: number;
-  people: number;
-  price: number;
+  pricePerDay: number;
+  seatingCapacity: number;
+  fuelCapacity: number;
   type?: string;
   transmission?: string;
   originalPrice?: number;
 };
 
 async function fetchAllCars() {
-  const query = `*[_type == "car" ]{
+  const query = `*[_type == "car" ][0...5]{
     id,
     name,
     type,
@@ -34,7 +35,7 @@ async function fetchAllCars() {
   try {
     const cars = await client.fetch(query);
 
-    return cars.map((car: any) => ({
+    return cars.map((car: AllCar) => ({
       id: car.id,
       name: car.name,
       type: car.type,
@@ -46,8 +47,8 @@ async function fetchAllCars() {
       transmission: car.transmission,
       originalPrice: car.originalPrice || undefined,
     }));
-  } catch (error) {
-    console.error("Error fetching data from Sanity:", error);
+  } catch {
+    console.error("Error fetching data from Sanity:");
     return [];
   }
 }
@@ -59,7 +60,7 @@ function Page() {
     async function fetchDynamicData() {
       const fetchedDynamicCars = await fetchAllCars();
 
-      SetAllCarData(fetchedDynamicCars.slice(0, 5));
+      SetAllCarData(fetchedDynamicCars);
     }
     fetchDynamicData();
   }, []);
@@ -97,24 +98,10 @@ function Page() {
           {/* Pick-Up and Drop-Off Section */}
           <div className="flex flex-col gap-2 py-3 border-b items-center ">
             {/* Pick-Up Section */}
-            <div className="flex flex-col gap-4 px-6 py-6 rounded-[10px] bg-white flex-1 ">
+            <div className="flex flex-col gap-4 px-6 py-6 rounded-[10px] bg-white flex-1">
               <div className="flex items-center gap-2">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    width="16"
-                    height="16"
-                    rx="8"
-                    fill="#3563E9"
-                    fillOpacity="0.3"
-                  />
-                  <circle cx="8" cy="8" r="4" fill="#3563E9" />
-                </svg>
+                <input type="radio" />
+
                 <h1 className="font-semibold">Pick-Up</h1>
               </div>
               <div className="flex flex-wrap sm:flex-nowrap gap-6">
@@ -138,10 +125,10 @@ function Page() {
                     <option value="" hidden>
                       Select your date
                     </option>
-                    <option value="8 to 16 Dec">8 to 16 Dec</option>
-                    <option value="1 to 20 Jan">1 to 20 Jan</option>
-                    <option value="15 to 27 Feb">15 to 27 Feb</option>
-                    <option value="1 to 10 March">1 to 10 March</option>
+                    <option value="15 to 27 Jan">15 to 27 Jan</option>
+                    <option value="1 to 10 Feb">1 to 10 Feb</option>
+                    <option value="8 to 16 March">8 to 16 March</option>
+                    <option value="1 to 20 April">1 to 20 April</option>
                   </select>
                 </div>
                 {/* Time */}
@@ -151,10 +138,10 @@ function Page() {
                     <option value="" hidden>
                       Select your time
                     </option>
-                    <option value="8 am">8 am</option>
-                    <option value="9 am">9 am</option>
-                    <option value="10 am">10 am</option>
-                    <option value="11 am">11 am</option>
+                    <option value="8 am">12 pm</option>
+                    <option value="1 pm">1 pm</option>
+                    <option value="2 pm">2 pm</option>
+                    <option value="3 pm">3 pm</option>
                   </select>
                 </div>
               </div>
@@ -163,22 +150,8 @@ function Page() {
             {/* Drop-Off Section */}
             <div className="flex flex-col gap-4 px-6 py-6 rounded-[10px] bg-white flex-1">
               <div className="flex items-center gap-2">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    width="16"
-                    height="16"
-                    rx="8"
-                    fill="#5CAFFC"
-                    fillOpacity="0.3"
-                  />
-                  <circle cx="8" cy="8" r="4" fill="#54A6FF" />
-                </svg>
+                <input type="radio" />
+
                 <h1 className="font-semibold">Drop-Off</h1>
               </div>
               <div className="flex flex-wrap sm:flex-nowrap gap-6">
@@ -202,10 +175,10 @@ function Page() {
                     <option value="" hidden>
                       Select your date
                     </option>
-                    <option value="8 to 16 Dec">8 to 16 Dec</option>
-                    <option value="1 to 20 Jan">1 to 20 Jan</option>
-                    <option value="15 to 27 Feb">15 to 27 Feb</option>
-                    <option value="1 to 10 March">1 to 10 March</option>
+                    <option value="15 to 27 Jan">15 to 27 Jan</option>
+                    <option value="1 to 10 Feb">1 to 10 Feb</option>
+                    <option value="8 to 16 March">8 to 16 March</option>
+                    <option value="1 to 20 April">1 to 20 April</option>
                   </select>
                 </div>
                 {/* Time */}
@@ -215,10 +188,10 @@ function Page() {
                     <option value="" hidden>
                       Select your time
                     </option>
-                    <option value="8 am">8 am</option>
-                    <option value="9 am">9 am</option>
-                    <option value="10 am">10 am</option>
-                    <option value="11 am">11 am</option>
+                    <option value="8 am">12 pm</option>
+                    <option value="1 pm">1 pm</option>
+                    <option value="2 pm">2 pm</option>
+                    <option value="3 pm">3 pm</option>
                   </select>
                 </div>
               </div>
@@ -243,7 +216,7 @@ function Page() {
             <h1 className=" font-bold text-base sm:text-xl">
               Top 5 Car Rental
             </h1>
-            <div className="flex flex-col md:flex-row items-center gap-2">
+            <div className="flex flex-col md:flex-row items-center gap-10">
               <div className="relative flex items-center justify-center">
                 <Image
                   src="/images/Chart.png"
@@ -283,7 +256,7 @@ function Page() {
                     >
                       <rect width="12" height="12" rx="6" fill="#0D3559" />
                     </svg>
-                    <h1>SUVr</h1>
+                    <h1>SUV</h1>
                   </div>
                   <div>9,478</div>
                 </div>
@@ -344,17 +317,19 @@ function Page() {
             {/* FEW CARS */}
             {AllCarData.map((car, index) => (
               <div key={index} className="space-y-6">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
-                  <Image src={car.image} alt="" width={150} height={150} />
-                  <div className="flex flex-col items-center gap-2">
-                    <h1 className="font-semibold" >{car.name}</h1>
+                <div className="flex flex-row items-center justify-between gap-2">
+                  <div className="justify-items-center ">
+                    <Image src={car.image} alt="" width={150} height={150} />
+                    <h1 className="font-semibold py-3 sm:hidden">{car.name}</h1>
+                  </div>
+                  <div className="flex flex-col items-center gap-2 max-sm:hidden">
+                    <h1 className="font-semibold">{car.name}</h1>
                   </div>
                   <div className="flex flex-col gap-2">
                     <h1 className="text-sm text-[#90A3BF]">20 July</h1>
                     <p>{car.price}</p>
                   </div>
                 </div>
-                
               </div>
             ))}
           </div>

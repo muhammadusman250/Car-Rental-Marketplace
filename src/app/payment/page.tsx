@@ -1,3 +1,4 @@
+import { Star } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
@@ -416,12 +417,13 @@ function page() {
               <h3 className="text-sm font-semibold text-[#1e2d40]">
                 Nissan GT – R
               </h3>
-              <Image
-                src="/images/Review Star.png"
-                alt="Nissan GT"
-                width={80}
-                height={80}
-              />
+              <div className="flex items-center gap-1 text-amber-400">
+              <Star/>
+              <Star/>
+              <Star/>
+              <Star/>
+              <Star/>
+              </div>
               <p className="text-xs text-[#90A3BF]">440+ Reviewer</p>
             </div>
           </div>
@@ -443,8 +445,8 @@ function page() {
               placeholder="Apply promo code"
               className="rounded-lg p-3 text-sm flex-grow bg-transparent w-full"
             />
-            <button className="bg-transparent text-black font-semibold text-sm  rounded-lg">
-              Apply now
+            <button className="bg-transparent text-black font-bold text-sm p-3 border-l-2 ">
+              Apply
             </button>
           </div>
 

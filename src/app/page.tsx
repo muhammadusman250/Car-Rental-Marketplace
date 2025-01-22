@@ -1,14 +1,12 @@
-import Footer from "@/components/Footer/Footer";
-import Header from "@/components/Header/Header";
-import Home from "@/components/Home/Home";
+import PopularCar from "@/components/PopularCar";
+import RecommendationCar from "@/components/RecommendationCar";
 import React from "react";
 
 const Page = () => {
   return (
     <div>
-      <Header />
-      <Home />
-      <Footer/>
+      <PopularCar heading={"Popular Cars"} />
+      <RecommendationCar />
     </div>
   );
 };

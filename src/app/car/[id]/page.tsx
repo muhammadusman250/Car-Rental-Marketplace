@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Mycard from "@/components/Mycard";
@@ -13,9 +14,13 @@ import { client } from "@/sanity/lib/client";
 import CarouselSkeleton from "@/components/CarouselSkeleton";
 import DetailPageSkeleton from "@/components/DetailPageSkeleton";
 import RentNowModel from "@/components/RentNowModel";
-import CategoryAsideBar from "@/components/Category AsideBar";
+import CategoryAsideBar from "@/components/CategoryAsideBar";
+import { ChevronDown, Star } from "lucide-react";
 
-type RecomCarData = {
+type recommendcardata = {
+  fuelCapacity: number;
+  seatingCapacity: number;
+  pricePerDay: number;
   id: number;
   name: string;
   category: string;
@@ -42,7 +47,8 @@ async function fetchCarsForRecommended() {
 
   try {
     const cars = await client.fetch(query);
-    return cars.map((car: any) => ({
+
+    return cars.map((car: recommendcardata) => ({
       id: car.id,
       name: car.name,
       category: car.category,
@@ -59,7 +65,7 @@ async function fetchCarsForRecommended() {
 }
 
 async function fetchAllCars() {
-  const query = `*[_type == "car"]{
+  const query = `*[_type == "car" ]{
     id,
     name,
     type,
@@ -74,10 +80,10 @@ async function fetchAllCars() {
 
   try {
     const cars = await client.fetch(query);
-    return cars.map((car: any) => ({
+
+    return cars.map((car: recommendcardata) => ({
       id: car.id,
       name: car.name,
-      type: car.type,
       category: car.category,
       image: car.image || "",
       petrol: car.fuelCapacity || 0,
@@ -94,24 +100,27 @@ async function fetchAllCars() {
 
 function Page({ params }: { params: { id: string } }) {
   const [priceRange, setPriceRange] = useState<[number, number]>([90, 210]);
-  const [allCarData, setAllCarData] = useState<RecomCarData[]>([]);
-  const [isPortal, setIsPortal] = useState(false);
-  const [recommendedCarData, setRecommendedCarData] = useState<RecomCarData[]>([]);
+  const [AllCarData, SetAllCarData] = useState<recommendcardata[]>([]);
+  const [isPortal, SetIsPortal] = useState(false);
+  const [RecommendedcarData, SetRecommendedcarData] = useState<
+    recommendcardata[]
+  >([]);
 
   const handleSliderChange = (value: [number, number]) => {
     setPriceRange(value);
   };
 
   const toggleModal = () => {
-    setIsPortal(!isPortal);
+    SetIsPortal(!isPortal);
   };
 
-  const searchedCar = allCarData.find((car) => car.id === parseInt(params.id));
+  const searchedCar = AllCarData.find((car) => car.id === parseInt(params.id));
 
   useEffect(() => {
     async function fetchDynamicData() {
       const fetchedDynamicCars = await fetchAllCars();
-      setAllCarData(fetchedDynamicCars);
+
+      SetAllCarData(fetchedDynamicCars);
     }
     fetchDynamicData();
   }, []);
@@ -119,55 +128,60 @@ function Page({ params }: { params: { id: string } }) {
   useEffect(() => {
     async function fetchRecommendData() {
       const fetchedCars = await fetchCarsForRecommended();
-      setRecommendedCarData(fetchedCars);
+      SetRecommendedcarData(fetchedCars);
     }
     fetchRecommendData();
   }, []);
 
   return (
-    <section className="bg-[#f6f7f9] flex">
-      <CategoryAsideBar maxPrice={priceRange} handleSliderChange={handleSliderChange} />
+    <section className="bg-[#f6f7f9] flex ">
+      <CategoryAsideBar
+        maxPrice={priceRange}
+        handleSliderChange={handleSliderChange}
+      />
 
-      <main className="w-full lg:w-[90%] xl:w-[85%] px-6 py-7 space-y-7">
+      {/* RIGHT SIDE */}
+      <main className=" w-full lg:w-[90%] xl:w-[85%] px-6 py-7 space-y-7">
         {!searchedCar ? (
           <DetailPageSkeleton />
         ) : (
           <div className="flex flex-col xl:flex-row gap-10">
-            <div className="flex flex-col gap-5 rounded-md w-full">
-              <div className="bg-[#3563E9] h-[232px] sm:h-[360px] relative flex flex-col items-center justify-end py-10">
+            {/* LEFT */}
+            <div className=" flex flex-col gap-5 rounded-md w-full">
+              <div className="bg-[#3563E9] h-[232px] sm:h-[360px] relative flex flex-col items-center justify-end py-10 ">
                 <Image
                   src={searchedCar?.image || ""}
                   alt="Image"
                   width={300}
                   height={150}
-                  className="sm:w-[300px] w-[190px]"
+                  className="sm:w-[300px] w-[190px] "
                 />
                 <div className="text-white flex flex-col gap-4 p-5 absolute top-0">
                   <h1 className="font-semibold text-base sm:text-[32px] leading-6 sm:leading-8">
                     Sports car with the best design and acceleration
                   </h1>
-                  <p className="font-medium text-xs sm:text-base leading-[15px] sm:leading-6">
+                  <p className="font-medium text-xs sm:text-base leading-[15px] sm:leading-6 ">
                     Safety and comfort while driving a{" "}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-5 justify-evenly">
+              <div className="flex items-center gap-5 justify-between">
                 <Image
-                  src="/images/view-1.png"
+                  src={"/images/view-1.png"}
                   alt="Image"
                   width={150}
                   height={150}
                   className="sm:w-[150px] w-[80px]"
                 />
                 <Image
-                  src="/images/view-2.png"
+                  src={"/images/view-2.png"}
                   alt="Image"
                   width={150}
                   height={150}
                   className="sm:w-[150px] w-[80px]"
                 />
                 <Image
-                  src="/images/view-3.png"
+                  src={"/images/view-3.png"}
                   alt="Image"
                   width={150}
                   height={150}
@@ -176,7 +190,8 @@ function Page({ params }: { params: { id: string } }) {
               </div>
             </div>
 
-            <div className="p-5 bg-white shadow rounded-md space-y-10">
+            {/* RIGHT */}
+            <div className="p-5 bg-white shadow rounded-md space-y-10 ">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <h1 className="font-bold text-3xl">{searchedCar?.name}</h1>
@@ -194,31 +209,40 @@ function Page({ params }: { params: { id: string } }) {
                   </svg>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Image
-                    src="/images/Review Star.png"
-                    alt="Star Image"
-                    width={100}
-                    height={100}
-                  />
+                  <div className="flex items-center text-yellow-400">
+                    <Star size={20} className="fill-yellow-400" />
+                    <Star size={20} className="fill-yellow-400" />
+                    <Star size={20} className="fill-yellow-400" />
+                    <Star size={20} className="fill-yellow-400" />
+                    <Star size={20} className="fill-yellow-400" />
+                  </div>
                   <h1 className="font-medium text-sm text-[#596780]">
                     440+ Reviewer
                   </h1>
                 </div>
               </div>
-              <p className="font-normal text-[#596780] leading-10">
-                NISMO has become the embodiment of Nissan's outstanding performance, inspired by the most unforgiving proving ground, the "race track".
-              </p>
+              <div>
+                <p className="font-normal text-[#596780] leading-10">
+                  NISMO has become the embodiment of Nissan&apos;s outstanding
+                  performance, inspired by the most unforgiving proving ground,
+                  the &quot;race track&quot;.
+                </p>
+              </div>
 
               <div className="flex items-center justify-between">
                 <div className="flex flex-col gap-5">
                   <div className="flex items-center justify-between gap-4 sm:gap-10">
-                    <h1 className="text-xs sm:text-xl text-[#90A3BF]">Type Car</h1>
+                    <h1 className="text-xs sm:text-xl text-[#90A3BF] ">
+                      Type Car
+                    </h1>
                     <h1 className="text-xs sm:text-xl text-[#596780] font-semibold">
                       {searchedCar?.type}
                     </h1>
                   </div>
                   <div className="flex items-center justify-between gap-4 sm:gap-10">
-                    <h1 className="text-xs sm:text-xl text-[#90A3BF]">Steering</h1>
+                    <h1 className="text-xs sm:text-xl text-[#90A3BF] ">
+                      Steering
+                    </h1>
                     <h1 className="text-xs sm:text-xl text-[#596780] font-semibold">
                       {searchedCar?.transmission}
                     </h1>
@@ -226,13 +250,17 @@ function Page({ params }: { params: { id: string } }) {
                 </div>
                 <div className="flex flex-col gap-5">
                   <div className="flex items-center justify-between gap-4 sm:gap-10">
-                    <h1 className="text-xs sm:text-xl text-[#90A3BF]">Capacity</h1>
+                    <h1 className="text-xs sm:text-xl text-[#90A3BF] ">
+                      Capacity
+                    </h1>
                     <h1 className="text-xs sm:text-xl text-[#596780] font-semibold">
                       {searchedCar?.people}
                     </h1>
                   </div>
-                  <div className="flex items-center justify-between gap-4 sm:gap-10">
-                    <h1 className="text-xs sm:text-xl text-[#90A3BF]">Gasoline</h1>
+                  <div className="flex items-center justify-between gap-4 sm:gap-10    ">
+                    <h1 className="text-xs sm:text-xl text-[#90A3BF] ">
+                      Gasoline
+                    </h1>
                     <h1 className="text-xs sm:text-xl text-[#596780] font-semibold">
                       {searchedCar?.petrol}
                     </h1>
@@ -243,9 +271,7 @@ function Page({ params }: { params: { id: string } }) {
               <div className="flex justify-between items-center">
                 <div className="flex flex-col">
                   <h1 className="text-xl font-bold">
-                    {searchedCar?.price.toString().includes("/day")
-                      ? searchedCar?.price
-                      : `${searchedCar?.price}/day`}
+                    ${searchedCar?.price} / day
                   </h1>
                   {searchedCar?.originalPrice && (
                     <h1 className="text-[#90A3BF] font-bold text-sm">
@@ -277,45 +303,144 @@ function Page({ params }: { params: { id: string } }) {
               13
             </div>
           </div>
-          {/* Client Reviews */}
-          {/* Repeat review structure for each client */}
+          {/* FIRST CLIENT */}
+          <div className="flex items-center justify-center gap-2 sm:gap-5 space-y-5">
+            <div className="py-5">
+              <Image
+                src="/images/Profil.png"
+                alt="profile image"
+                width={100}
+                height={100}
+                className=" w-[50px]"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-around w-full gap-5">
+              <div className="flex items-center justify-between w-full">
+                <div>
+                  <h1 className="font-bold text-base sm:text-xl">
+                    Alex Stanton
+                  </h1>
+                  <h1 className="text-xs sm:text-sm font-medium text-[#90A3BF]">
+                    CEO at Bukalapak
+                  </h1>
+                </div>
+                <div className="justify-items-center">
+                  <h1 className="text-xs sm:text-sm font-medium text-[#90A3BF]">
+                    21 July 2022
+                  </h1>
+                  <div className="flex items-center text-yellow-400">
+                    <Star className="fill-yellow-400" size={20} />
+                    <Star className="fill-yellow-400" size={20} />
+                    <Star className="fill-yellow-400" size={20} />
+                    <Star className="fill-yellow-400" size={20} />
+                    <Star className="fill-yellow-400" size={20} />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm text-[#596780] font-normal ">
+                  We are very happy with the service from the MORENT App. Morent
+                  has a low price and also a large variety of cars with good and
+                  comfortable facilities. In addition, the service provided by
+                  the officers is also very friendly and very polite.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* SECOND CLIENT */}
+          <div className="flex items-center justify-center gap-2 sm:gap-5 space-y-5">
+            <div className="py-5">
+              <Image
+                src="/images/ProfilL (1).png"
+                alt="profile image"
+                width={100}
+                height={100}
+                className=" w-[50px]"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-around w-full gap-5">
+              <div className="flex items-center justify-between w-full">
+                <div>
+                  <h1 className="font-bold text-base sm:text-xl">
+                    Alex Stanton
+                  </h1>
+                  <h1 className="text-xs sm:text-sm font-medium text-[#90A3BF]">
+                    CEO at Bukalapak
+                  </h1>
+                </div>
+                <div className="justify-items-center">
+                  <h1 className="text-xs sm:text-sm font-medium text-[#90A3BF]">
+                    21 July 2022
+                  </h1>
+                  <div className="flex items-center text-yellow-400">
+                    <Star className="fill-yellow-400" size={20} />
+                    <Star className="fill-yellow-400" size={20} />
+                    <Star className="fill-yellow-400" size={20} />
+                    <Star className="fill-yellow-400" size={20} />
+                    <Star className="fill-yellow-400" size={20} />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm text-[#596780] font-normal ">
+                  We are very happy with the service from the MORENT App. Morent
+                  has a low price and also a large variety of cars with good and
+                  comfortable facilities. In addition, the service provided by
+                  the officers is also very friendly and very polite.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="text-[#90A3BF] flex items-center justify-center gap-4">
+        <div className="text-[#90A3BF] flex items-center justify-center gap-2">
           <button>Show All</button>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M8.00026 11.1996C7.53359 11.1996 7.06692 11.0196 6.71359 10.6663L2.36692 6.31964C1.97926 5.93197 1.97926 5.2683 2.36692 4.88063C2.75459 4.49296 3.41826 4.49296 3.80592 4.88063L7.00026 8.07496L7.00026 4.79996C7.00026 4.35129 7.35159 3.99996 7.80026 3.99996C8.24992 3.99996 8.60026 4.35129 8.60026 4.79996L8.60026 8.07496L11.7946 4.88063C12.1823 4.49296 12.846 4.49296 13.2336 4.88063C13.6213 5.2683 13.6213 5.93197 13.2336 6.31964L8.88692 10.6663C8.53359 11.0196 8.00026 11.1996 8.00026 11.1996Z"
-              fill="white"
-            />
-          </svg>
+          <ChevronDown />
         </div>
 
-        <div>
-          <Carousel>
-            <CarouselContent>
-              {recommendedCarData.length > 0 ? (
-                recommendedCarData.map((car, index) => (
-                  <CarouselItem key={index}>
-                    <Mycard
-                      id={car.id}
-                      name={car.name}
-                      category={car.category}
-                      pricePerDay={car.price}
-                      image={car.image} petrol={0} people={0}                    />
-                  </CarouselItem>
-                ))
-              ) : (
-                <CarouselSkeleton />
-              )}
-            </CarouselContent>
-          </Carousel>
+        <div className=" bg-[#f6f7f9] py-8 space-y-8">
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <h1 className="text-[#90A3BF] text-base font-semibold ">
+                Recomendation Car
+              </h1>
+              <h1 className="text-[#3563E9] text-base font-semibold ">
+                View All
+              </h1>
+            </div>
+            <Carousel className="w-full max-w-full">
+              <CarouselContent>
+                {RecommendedcarData.length === 0 ? (
+                  <CarouselSkeleton />
+                ) : (
+                  RecommendedcarData.map(
+                    (val: recommendcardata, index: number) => (
+                      <CarouselItem
+                        key={index}
+                        className="md:basis-1/2 lg:basis-1/3 xl:basis-1/3 border-none"
+                      >
+                        <Card className="border-none h-96">
+                          <CardContent className="flex border-none aspect-square items-center justify-center p-5">
+                            <Mycard
+                              id={val.id}
+                              name={val.name}
+                              category={val.category}
+                              image={val.image}
+                              petrol={val.petrol}
+                              people={val.people}
+                              price={val.price}
+                              originalPrice={val.originalPrice}
+                            />
+                          </CardContent>
+                        </Card>
+                      </CarouselItem>
+                    )
+                  )
+                )}
+              </CarouselContent>
+            </Carousel>
+          </div>
         </div>
       </main>
     </section>

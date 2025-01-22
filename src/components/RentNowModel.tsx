@@ -6,7 +6,6 @@ import Image from "next/image";
 type searchCar = {
   id: number;
   name: string;
-  category: string;
   image: string;
   petrol: number;
   people: number;
