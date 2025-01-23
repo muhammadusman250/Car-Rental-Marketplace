@@ -16,7 +16,7 @@ type PopularCarData = {
   fuelCapacity: number;
   id: number;
   name: string;
-  category: string;
+  type: string;
   image: string;
   petrol: number;
   people: number;
@@ -26,9 +26,9 @@ type PopularCarData = {
 
 async function fetchCarsFromSanity() {
   const query = `*[_type == "car" && "popular" in tags]{
-    id,
+    _id,
     name,
-    category,
+    type,
     "image": image.asset->url,
     fuelCapacity,
     seatingCapacity,
@@ -39,9 +39,9 @@ async function fetchCarsFromSanity() {
   try {
     const cars = await client.fetch(query);
     return cars.map((car: PopularCarData) => ({
-      id: car.id,
+      _id: car.id,
       name: car.name,
-      category: car.category,
+      type: car.type,
       image: car.image || "",
       petrol: car.fuelCapacity || 0,
       people: car.seatingCapacity || 0,
@@ -90,7 +90,7 @@ function PopularCar({ heading }: { heading: string }) {
                       <Mycard
                         id={val.id}
                         name={val.name}
-                        category={val.category}
+                        type={val.type}
                         image={val.image}
                         petrol={val.petrol}
                         people={val.people}
