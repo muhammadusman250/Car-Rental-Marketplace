@@ -7,7 +7,6 @@ import GridSkeleton from "@/components/GridSkeleton";
 type AllCar = {
   id: number;
   name: string;
-  category: string;
   image: string;
   type:string;
   pricePerDay: number;
@@ -24,7 +23,7 @@ async function fetchAllCarsFromSanity() {
     id,
     type,
     name,
-    category,
+    type,
     "image": image.asset->url,
     fuelCapacity,
     seatingCapacity,
@@ -39,7 +38,6 @@ async function fetchAllCarsFromSanity() {
       id: car.id,
       name: car.name,
       type:car.type,
-      category: car.category,
       image: car.image || "",
       petrol: car.fuelCapacity || 0,
       people: car.seatingCapacity || 0,
@@ -135,15 +133,15 @@ function Page() {
                   .toLowerCase()
                   .includes(searchValue.toLowerCase())
               )
-              .filter((filtCategory) =>
-                filtCategory.type.includes(filterType)
+              .filter((filttype) =>
+                filttype.type.includes(filterType)
               )
               .map((val: AllCar) => (
                 <Mycard
                   key={val.id}
                   id={val.id}
                   name={val.name}
-                  category={val.category}
+                  type={val.type}
                   image={val.image}
                   petrol={val.petrol}
                   people={val.people}
