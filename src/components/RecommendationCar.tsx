@@ -10,7 +10,7 @@ type recommendcardata = {
   _id: string;
   id: number;
   name: string;
-  category: string;
+  type: string;
   image: string;
   petrol: number;
   people: number;
@@ -27,7 +27,7 @@ function RecommendationCar() {
     const query = `*[_type == "car" && "recommended" in tags]{
     _id,
       name,
-      category,
+      type,
       "image": image.asset->url,
       fuelCapacity,
       seatingCapacity,
@@ -40,7 +40,7 @@ function RecommendationCar() {
       const formattedCars = cars.map((car: recommendcardata) => ({
         id: car.id,
         name: car.name,
-        category: car.category,
+        type: car.type,
         image: car.image || "",
         petrol: car.fuelCapacity || 0,
         people: car.seatingCapacity || 0,
@@ -72,7 +72,7 @@ function RecommendationCar() {
                 key={car._id }
                 id={car.id}
                 name={car.name}
-                category={car.category}
+                type={car.type}
                 image={car.image}
                 petrol={car.petrol}
                 people={car.people}
