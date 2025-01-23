@@ -10,7 +10,7 @@ import { Heart } from "lucide-react";
 type data = {
   id: number;
   name: string;
-  category: string;
+  type?: string;
   image: string;
   petrol: number;
   people: number;
@@ -21,7 +21,7 @@ type data = {
 function Card({
   id,
   name,
-  category,
+  type,
   image,
   petrol,
   people,
@@ -42,18 +42,19 @@ function Card({
                 addToWish({
                   id,
                   name,
-                  category,
+                  type,
                   image,
                   petrol,
                   people,
                   price,
                   originalPrice,
+                  category: ""
                 })
               }
             />
           </Link>
         </div>
-        <div className="text-[#90A3BF] font-bold text-sm ">{category}</div>
+        <div className="text-[#90A3BF] font-bold text-sm ">{type}</div>
       </div>
       <div className="flex justify-center">
         <Image src={image} alt="Image" width={200} height={150} />
