@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Mycard from "@/components/Mycard";
@@ -98,7 +98,6 @@ async function fetchAllCars() {
 }
 
 function Page() {
-  const router = useRouter();
   const { _id } = useParams();
   console.log(_id);
   const carId = _id ? parseInt(_id as string) : undefined;
